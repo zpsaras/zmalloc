@@ -38,6 +38,7 @@ header_t * find_free(header_t **last, size_t size){
 
 header_t * get_more(header_t * last, size_t size){
 	header_t * block;
+	//void * block;
 	void * after; //Must be void* because sbrk may return -1
 
 	block = sbrk(0); //Top of heap before alloc
@@ -54,7 +55,7 @@ header_t * get_more(header_t * last, size_t size){
 	block->size = size;
 	block->next = NULL;
 	block->free = 0;
-	return block;
+	return (header_t*)block;
 }
 
 void * zmalloc(size_t size){
@@ -70,7 +71,7 @@ void * zmalloc(size_t size){
 	if (size + HEADER_SIZE < MIN_ALLOC_SIZE){
 		size = MIN_ALLOC_SIZE;
 	} else {
-		for(count = 0; count * MIN_ALLOC_SIZE > size + HEADER_SIZE; count++);
+		for(count = 0; (count * MIN_ALLOC_SIZE) > (size + HEADER_SIZE); count++);
 		size = count * MIN_ALLOC_SIZE;
 	}
 
