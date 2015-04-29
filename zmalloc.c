@@ -15,6 +15,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <stdint.h>
+#include <unistd.h>
 
 typedef struct header {
 	unsigned int size;
@@ -22,7 +24,7 @@ typedef struct header {
 	int free;
 } header_t;
 
-#define MIN_ALLOC_SIZE 4096 //getconf PAGESIZE
+#define MIN_ALLOC_SIZE 4096
 #define HEADER_SIZE sizeof(header_t)
 
 header_t *list_head = NULL;
