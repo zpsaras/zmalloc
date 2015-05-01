@@ -9,8 +9,8 @@
  *		exactly what I needed to begin looking into this stuff!
  *
  **************************************************************/
-#ifndef zmalloc_H
-#define zmalloc_H
+#ifndef __ZMALLOC
+#define __ZMALLOC
 
 #include <assert.h>
 #include <stdio.h>
@@ -24,10 +24,15 @@ typedef struct header {
 	int free;
 } header_t;
 
-#define MIN_ALLOC_SIZE 4096
+#ifndef MIN_ALLOC_SIZE
+ #define MIN_ALLOC_SIZE 4096
+#endif
+
 #define HEADER_SIZE sizeof(header_t)
 
-header_t *list_head = NULL;
+header_t * list_head = NULL;
+
+void * zmemset(void *, int, size_t);
 
 header_t * find_free(header_t **last, size_t size){
 	header_t * current = list_head;
@@ -100,6 +105,13 @@ void * zmalloc(size_t size){
 	return (block+1);
 }
 
+void * zcalloc(size_t size){
+	header_t * block;
+	block = zmalloc(size);
+	zmemset((void*)block, 0, size); //I'd like to implement this myself...
+	return block;
+}
+
 header_t * get_block_ptr(void * ptr){
 	return (header_t*) ptr - 1;
 }
@@ -116,8 +128,16 @@ void zfree(void * ptr){
 	
 	block->free = 1;
 }
-	
-//TODO: calloc and realloc
+
+//Some would question the point of this.
+void * zmemset(void * ptr, int c, size_t size){
+	unsigned char * p = ptr;
+	while(size--)
+		*p++ = (unsigned char)c;
+	return p;
+}
+
+//TODO: realloc
 #endif
 
 
